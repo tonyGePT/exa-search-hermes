@@ -6,6 +6,11 @@ metadata:
   hermes:
     tags: [search, web, research, data-extraction]
     category: search
+required_environment_variables:
+  - name: EXA_API_KEY
+    prompt: Exa API key
+    help: Get a key from https://dashboard.exa.ai/api-keys
+    required_for: full functionality
 ---
 
 # Exa Search and Contents Skill for Hermes
