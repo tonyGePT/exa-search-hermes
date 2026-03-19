@@ -1,0 +1,10 @@
+{
+  "query": "recent breakthroughs in quantum computing",
+  "type": "auto",
+  "numResults": 5,
+  "contents": {
+    "highlights": {
+      "maxCharacters": 4000
+    }
+  }
+}

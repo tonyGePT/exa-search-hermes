@@ -1,0 +1,8 @@
+{
+  "name": "exa-search-hermes-skill",
+  "version": "1.0.0",
+  "description": "Dependencies for the Hermes Exa Search Skill",
+  "dependencies": {
+    "exa-js": "^1.0.0"
+  }
+}

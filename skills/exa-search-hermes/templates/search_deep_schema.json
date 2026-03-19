@@ -1,0 +1,22 @@
+{
+  "query": "compare the latest frontier AI model releases",
+  "type": "deep",
+  "systemPrompt": "Prefer official sources and avoid duplicate results",
+  "outputSchema": {
+    "type": "object",
+    "required": ["models"],
+    "properties": {
+      "models": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["name", "notable_claims"],
+          "properties": {
+            "name": {"type": "string"},
+            "notable_claims": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  }
+}
