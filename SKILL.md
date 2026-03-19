@@ -1,44 +1,40 @@
 ---
 name: exa-search-hermes
 description: Allow Hermes Agent to conduct high-quality AI-native searches and extract LLM-ready content using the Exa API. Suitable for deep research, factual lookups, and structured data extraction.
+version: 1.0.0
+metadata:
+  hermes:
+    tags: [search, web, research, data-extraction]
+    category: search
 ---
 
 # Exa Search and Contents Skill for Hermes
 
-This skill integrates the Exa API, allowing the Hermes agent to perform advanced web searches and extract clean, LLM-ready markdown content from any URL.
-
-## Triggers
+## When to Use
 - When the user asks to search the web for information about recent events, companies, people, or research papers.
 - When the user provides URLs and asks to extract text, summaries, or highlights from them.
 - When deep research with structured data extraction is requested.
+- As an alternative or powerful fallback when standard web scraping fails or is inefficient.
 
-## Capabilities
+## Procedure
+1. **Understand the User Request**: Determine if the goal is a general search (`/search`) or retrieving contents from specific URLs (`/contents`).
+2. **Select the Endpoint**:
+   - **Search**: Make a call using the `EXA_API_KEY` to the `/search` endpoint. For searches, you **must** wrap desired extraction modes (`text`, `highlights`, `summary`) inside the `contents` property (e.g., `{"contents": {"highlights": {"maxCharacters": 4000}}}`).
+   - **Contents**: When extracting from specific URLs, use the `/contents` endpoint. For this endpoint, `text`, `highlights`, and `summary` are **top-level** parameters.
+3. **Execute the Request**: Use the provided helper scripts in the `scripts/` directory or run a cURL/HTTP request.
+   - Example Search: `python scripts/search.py "query"`
+   - Example Contents: `python scripts/get_contents.py <url>`
+4. **Parse and Synthesize**: Read the extracted token-efficient markdown text or highlights, and format the final answer for the user based on their specific request.
 
-### 1. Search (`/search` endpoint)
-Perform natural language searches with semantic query capabilities.
-- **Search Types**: `auto`, `fast`, `instant`, `deep`, `deep-reasoning`.
-- **Content filtering**: Exclude/include domains, filter by category (`company`, `people`, `research paper`, `news`, etc.).
-- **Response modes**: Full text, highlights (token efficient), and LLM-generated summaries.
-
-### 2. Contents (`/contents` endpoint)
-Extract content from one or more URLs.
-- Can handle JS-rendered pages and PDFs.
-- Can generate highlights and summaries directly from URLs.
-- Supports subpage crawling.
-
-## Integration Details
-
-- **Language/SDK**: Python (`exa-py`), Node (`exa-js`), or raw cURL/HTTP requests.
-- **Auth**: Requires an `EXA_API_KEY` defined in the environment or passed via header `x-api-key`.
-- **Helper Scripts**: Available in the `scripts/` directory for fast CLI testing or sub-agent execution.
-- **Templates**: Example schemas and `.env.example` setup in `templates/`.
-- **References**: Full endpoint documentation is provided in the `references/` directory.
-
-## Best Practices & Common Pitfalls
-- **Avoid Deprecated Params**: Do NOT use `useAutoprompt`, `numSentences`, `highlightsPerUrl`, `tokensNum`, or `livecrawl: "always"`.
-- **Nesting Rules**:
+## Pitfalls
+- **Avoid Deprecated Parameters**: Do NOT use `useAutoprompt`, `numSentences`, `highlightsPerUrl`, `tokensNum`, or `livecrawl: "always"`.
+- **Nesting Rules Confusion**:
   - For the **`/search`** endpoint: `text`, `highlights`, and `summary` **must** be nested inside `contents`.
   - For the **`/contents`** endpoint: `text`, `highlights`, and `summary` are **top-level** parameters.
-- **Token Efficiency**: Use `highlights` (e.g. `{"highlights": {"maxCharacters": 4000}}`) as the default setup for agent operations, as it is 10x more token-efficient than full text.
-- **Category Filters**: The `category: "company"` or `category: "people"` filters do not support date filters, text filters, or `excludeDomains`.
-- **Error Checking**: The `/contents` endpoint returns a 200 HTTP status even if individual URLs fail. Always check the `statuses` array in the response to determine if a URL was successfully extracted.
+- **Context Window Flooding**: Default to using `highlights` (e.g., `{"highlights": {"maxCharacters": 4000}}`) instead of `text`. It extracts the most relevant excerpts and is 10x more token-efficient for agents.
+- **Category Filter Restrictions**: The `category: "company"` or `category: "people"` filters do not support date filters, text filters, or `excludeDomains`.
+- **Silent URL Failures**: The `/contents` endpoint returns an HTTP 200 even if individual URLs fail to extract. Always check the `statuses` array in the response to verify success.
+
+## Verification
+- Confirm that the search effectively retrieved valid document URLs answering the user's query.
+- Verify that retrieved text from URLs is in plain text/markdown format and answers the user's ultimate objective without encountering an authentication or `CRAWL_NOT_FOUND` error.
