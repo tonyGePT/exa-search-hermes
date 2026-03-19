@@ -1,6 +1,6 @@
 ---
 name: exa-search-hermes
-description: Conduct high-quality AI-native searches and extract LLM-ready content using the Exa API. Suitable for deep research, factual lookups, and structured data extraction.
+description: Allow Hermes Agent to conduct high-quality AI-native searches and extract LLM-ready content using the Exa API. Suitable for deep research, factual lookups, and structured data extraction.
 ---
 
 # Exa Search and Contents Skill for Hermes
